@@ -104,6 +104,8 @@
   .stats .n{font-family:"Gowun Batang",serif; font-size:24px; font-weight:700; display:block; line-height:1.1}
   .stats .t{font-size:11px; color:var(--ink-soft)}
   .stats .hi .n{color:var(--rare)}
+  .stats .rec .n{color:var(--accent)}
+  .stats .t{white-space:nowrap}
   .menu{display:flex; flex-direction:column; gap:9px; margin-top:26px}
   .menu .btn, .menu .dexbtn{margin-top:0}
 
@@ -377,7 +379,7 @@ var DICT_TIERS = ["가게\n가격\n가구\n가기\n가까이\n가끔\n가나\n�
     undoUsed:false, difficulty:0.35, started:false,
     dex:{}, rareList:[], exam:false, examReady:false,
     sound:true, haptic:true, hint:null, hintsUsed:0,
-    ads:false, freeHint:true, sinceAd:0
+    ads:false, freeHint:true, sinceAd:0, best:0
   };
   st.ads = ADS_DEFAULT;
   var NEED_WINS = 3;
@@ -546,6 +548,7 @@ var DICT_TIERS = ["가게\n가격\n가구\n가기\n가까이\n가끔\n가나\n�
       if (typeof v.hintsUsed === 'number') st.hintsUsed = v.hintsUsed;
       if (typeof v.ads === 'boolean') st.ads = v.ads;
       if (typeof v.sinceAd === 'number') st.sinceAd = v.sinceAd;
+      if (typeof v.best === 'number') st.best = v.best;
       st.difficulty = Math.min(1, Math.max(rankFloor(), st.difficulty));
     }catch(e){}
   }
@@ -554,7 +557,7 @@ var DICT_TIERS = ["가게\n가격\n가구\n가기\n가까이\n가끔\n가나\n�
       rankIdx:st.rankIdx, prog:st.prog, dexWords:st.dexWords,
       dexKill:st.dexKill, dexRare:st.dexRare, difficulty:st.difficulty,
       dex:st.dex, rareList:st.rareList.slice(-60), examReady:st.examReady,
-      sound:st.sound, haptic:st.haptic, hintsUsed:st.hintsUsed, ads:st.ads, sinceAd:st.sinceAd })); }catch(e){}
+      sound:st.sound, haptic:st.haptic, hintsUsed:st.hintsUsed, ads:st.ads, sinceAd:st.sinceAd, best:st.best })); }catch(e){}
   }
 
   function pinKibo(){
@@ -827,12 +830,16 @@ var DICT_TIERS = ["가게\n가격\n가구\n가기\n가까이\n가끔\n가나\n�
     }
     /* 급수가 정해진 뒤에 바닥을 적용한다. 승급하면 그 자리에서 바로 세진다. */
     st.sinceAd++;
+    var record = st.moves.length > st.best;
+    if (record) st.best = st.moves.length;
     st.difficulty = Math.min(1, Math.max(rankFloor(), st.difficulty));
     save();
     if (win){
       if (promoted){ SFX.promote(); buzz([16,50,16,50,40]); }
       else { SFX.win(); buzz([14,60,24]); }
     } else { SFX.lose(); buzz(40); }
+    /* 승패음이 끝난 뒤에 기록 소리를 얹는다 */
+    if (record && st.moves.length >= 6) setTimeout(function(){ SFX.rare(); buzz([10,40,10]); }, 700);
     var h = '<section class="over">' +
       '<h2>' + (wasExam ? (win ? '합격' : '불합격') : (win ? '불계승' : '불계패')) + '</h2>' +
       '<p class="why">' + why + '</p>' +
@@ -840,6 +847,10 @@ var DICT_TIERS = ["가게\n가격\n가구\n가기\n가까이\n가끔\n가나\n�
         RANKS[st.rankIdx] + '으로 승급하셨습니다.</p>' +
         '<p class="why">한글이도 ' + aiRank() + '이 되었습니다. 더는 그 아래로 물러서지 않습니다.</p>' : '') +
       (wasExam && !win ? '<p class="why">급수는 그대로입니다. 다시 응시할 수 있습니다.</p>' : '') +
+      (record && st.moves.length >= 6
+        ? '<p class="why" style="color:var(--rare);font-weight:700">최장 기록입니다 — ' +
+          st.moves.length + '수까지 이었습니다.</p>'
+        : '<p class="why">' + st.moves.length + '수 · 최장 ' + st.best + '수</p>') +
       '<div class="rankbar"><div class="lab"><span>' + RANKS[st.rankIdx] + '</span>' +
         '<span>' + (st.examReady ? '승급 시험 응시 가능' : '시험까지 ' + Math.max(0, NEED_WINS - st.prog) + '판') + '</span></div>' +
         '<div class="track"><div class="fill" style="width:' +
@@ -933,6 +944,7 @@ var DICT_TIERS = ["가게\n가격\n가구\n가기\n가까이\n가끔\n가나\n�
       (rares.length
         ? '<div class="chips">' + rares.map(function(w){ return '<span class="chip">' + w + '</span>'; }).join('') + '</div>'
         : '<p class="empty">아직 없습니다. 한글이는 흔한 명사 24,912개만 압니다. 그 밖의 말을 두면 여기 쌓입니다.</p>') +
+      '<div class="bookrow"><span>최장 수순</span><b>' + st.best + '수</b></div>' +
       '<div class="bookrow"><span>지금까지 둔 말</span><b>' + st.dexWords + '</b></div>' +
       '<div class="bookrow"><span>이긴 한방</span><b>' + st.dexKill + '</b></div>' +
       '<button class="btn wide" id="back">돌아가기</button>' +
@@ -993,6 +1005,7 @@ var DICT_TIERS = ["가게\n가격\n가구\n가기\n가까이\n가끔\n가나\n�
         '<div class="track"><div class="fill" style="width:' +
           (st.examReady ? 100 : st.prog / NEED_WINS * 100) + '%"></div></div>' +
         '<div class="stats">' +
+          '<div class="rec"><span class="n">' + st.best + '</span><span class="t">최장 수순</span></div>' +
           '<div><span class="n">' + st.dexWords + '</span><span class="t">둔 말</span></div>' +
           '<div><span class="n">' + st.dexKill + '</span><span class="t">이긴 한방</span></div>' +
           '<div class="hi"><span class="n">' + st.dexRare + '</span><span class="t">낯선 말</span></div>' +
@@ -1025,6 +1038,7 @@ var DICT_TIERS = ["가게\n가격\n가구\n가기\n가까이\n가끔\n가나\n�
             ? '힌트·무르기는 리워드, 전면은 ' + AD_EVERY + '판에 한 번'
             : '꺼짐 — 힌트는 한 판에 한 번 무료입니다', st.ads) +
       '<p class="sect">기록</p>' +
+      '<div class="bookrow"><span>최장 수순</span><b>' + st.best + '수</b></div>' +
       '<div class="bookrow"><span>둔 말</span><b>' + st.dexWords + '</b></div>' +
       '<div class="bookrow"><span>끝내는 글자</span><b>' + dexCount().main + ' / ' + DEX_MAIN.length + '</b></div>' +
       '<div class="bookrow"><span>급수</span><b>' + RANKS[st.rankIdx] + '</b></div>' +
@@ -1048,7 +1062,7 @@ var DICT_TIERS = ["가게\n가격\n가구\n가기\n가까이\n가끔\n가나\n�
       if (this.dataset.armed){
         try{ localStorage.removeItem('wchain5'); }catch(e){}
         st.rankIdx = 0; st.prog = 0; st.dexWords = 0; st.dexKill = 0; st.dexRare = 0;
-        st.dex = {}; st.rareList = []; st.examReady = false; st.difficulty = 0.35;
+        st.dex = {}; st.rareList = []; st.examReady = false; st.difficulty = 0.35; st.best = 0;
         save(); go('home');
       } else {
         this.dataset.armed = '1';
