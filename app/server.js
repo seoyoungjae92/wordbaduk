@@ -54,7 +54,13 @@ createServer(async (req, res) => {
       if ((await stat(path)).isDirectory()) path = join(path, 'index.html');
       return await send(res, path);
     } catch {
-      // 없는 경로는 앱 껍데기로 돌려준다 (단일 페이지)
+      /* 없는 경로를 무조건 index.html로 돌려주면 안 된다.
+         안드로이드가 /.well-known/assetlinks.json 을 받아 갈 때 HTML이 오면
+         TWA 검증이 엉뚱한 이유로 실패한다. 확장자가 있는 요청은 정직하게 404. */
+      if (extname(rel)) {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        return res.end('not found');
+      }
       return await send(res, join(ROOT, 'index.html'));
     }
   } catch {
