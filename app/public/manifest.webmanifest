@@ -1,0 +1,20 @@
+{
+  "name": "끝말잇기 대국",
+  "short_name": "끝말잇기",
+  "description": "져줄 줄 아는 AI와 두는 끝말잇기. 표준국어대사전 28만 단어.",
+  "id": "/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "ko",
+  "dir": "ltr",
+  "theme_color": "#DCB473",
+  "background_color": "#DCB473",
+  "categories": ["games", "word", "puzzle"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

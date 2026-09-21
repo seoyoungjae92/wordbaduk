@@ -27,3 +27,13 @@ async function boot() {
 }
 
 boot();
+
+/* 서비스 워커. TWA(안드로이드 래퍼)가 요구하는 조건이기도 하고,
+   웹에서 열었을 때 오프라인으로 돌게 해준다. 실패해도 게임은 그대로 돈다. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register(import.meta.env.BASE_URL + 'sw.js', { scope: import.meta.env.BASE_URL })
+      .catch(() => {});
+  });
+}
