@@ -5,7 +5,8 @@ index.html 안의 네 개 데이터 상수를 원천 데이터로부터 다시 �
 
   DICT_IDX    내가 쓸 수 있는 말. 첫 음절 -> 나머지 음절(개행 구분)
   DICT_TIERS  한글이가 아는 말. 말뭉치 빈도순 3단
-  DEX_MAIN    도감 15칸. '끝내는 글자'와 그 글자로 끝나는 가장 흔한 말
+  DEX_MAIN    도감 1권 15칸. '끝내는 글자' 중 흔한 말로 닿는 것
+  DEX_HARD    도감 2권 13칸. 명사로는 닿지만 흔하지는 않은 것
   DEAD_ALL    끝내는 글자 전체(201자). 도감 밖 수집용
 
 원천 데이터 세 가지는 tools/data/ 에 받아둔다. 없으면 내려받는다.
@@ -98,14 +99,18 @@ def build(paths):
     dead = sorted(c for c in ends
                   if sum(firsts.get(s, 0) for s in allowed_starts(c)) == 0)
 
-    # 5. 그중 '흔한 말로 닿을 수 있는' 것만 도감 칸으로 쓴다.
-    dex = []
+    # 5. 도감은 두 권이다.
+    #    1권 = 흔한 말로 닿는 글자, 2권 = 명사로는 닿지만 흔하지 않은 글자.
+    #    나머지는 고어·방언으로만 닿아서 수집 대상으로 부적합하다.
+    dex, hard = [], []
     for c in dead:
-        reach = [w for w in ends[c] if w in nouns and rank.get(w, 10 ** 9) < 60000]
-        if reach:
-            reach.sort(key=lambda w: rank.get(w, 10 ** 9))
-            dex.append({"s": c, "w": reach[0]})
+        nearby = [w for w in ends[c] if w in nouns]
+        if not nearby:
+            continue
+        nearby.sort(key=lambda w: rank.get(w, 10 ** 9))
+        (dex if rank.get(nearby[0], 10 ** 9) < 60000 else hard).append({"s": c, "w": nearby[0]})
     dex.sort(key=lambda x: rank.get(x["w"], 10 ** 9))
+    hard.sort(key=lambda x: rank.get(x["w"], 10 ** 9))
 
     # 6. 첫 음절을 키로 빼서 중복 3바이트를 없앤다.
     idx = {}
@@ -113,7 +118,7 @@ def build(paths):
         idx.setdefault(w[0], []).append(w[1:])
 
     return {
-        "words": words, "tiers": tiers, "dex": dex, "dead": dead,
+        "words": words, "tiers": tiers, "dex": dex, "hard": hard, "dead": dead,
         "idx": {k: "\n".join(v) for k, v in idx.items()},
         "probe": [w for w in basic if rank.get(w, 10 ** 9) < 60000],
     }
@@ -135,6 +140,7 @@ def inject(b):
     html = open(HTML, encoding="utf-8").read()
     payload = {
         "DEX_MAIN": json.dumps(b["dex"], ensure_ascii=False, separators=(",", ":")),
+        "DEX_HARD": json.dumps(b["hard"], ensure_ascii=False, separators=(",", ":")),
         "DEAD_ALL": json.dumps("".join(b["dead"]), ensure_ascii=False),
         "DICT_IDX": json.dumps(b["idx"], ensure_ascii=False, separators=(",", ":")),
         "DICT_TIERS": json.dumps(["\n".join(t) for t in b["tiers"]],
@@ -164,8 +170,10 @@ def main():
     print(f"  한글이가 아는 말     {sum(len(t) for t in b['tiers']):,}   "
           f"(1단 {len(b['tiers'][0]):,} / 2단 {len(b['tiers'][1]):,} / 3단 {len(b['tiers'][2]):,})")
     print(f"  단 별 응수 가능률    {cov[0]:.1f}% → {cov[1]:.1f}% → {cov[2]:.1f}%")
-    print(f"  끝내는 글자          {len(b['dead'])}   (도감 {len(b['dex'])}칸)")
-    print(f"  도감                 {' '.join(m['s'] + '(' + m['w'] + ')' for m in b['dex'])}")
+    print(f"  끝내는 글자          {len(b['dead'])}   "
+          f"(도감 1권 {len(b['dex'])}칸 + 2권 {len(b['hard'])}칸, 나머지는 고어·방언뿐)")
+    print(f"  1권                  {' '.join(m['s'] + '(' + m['w'] + ')' for m in b['dex'])}")
+    print(f"  2권                  {' '.join(m['s'] + '(' + m['w'] + ')' for m in b['hard'])}")
     print()
 
     if dry:
