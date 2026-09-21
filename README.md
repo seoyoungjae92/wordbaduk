@@ -21,7 +21,7 @@ app/                   앱인토스 미니앱 (Granite WebView + Vite)
   src/platform.js      토스 SDK 어댑터 (없으면 브라우저 폴백)
   src/style.css
   public/dict.json     사전 (빌드 산출물, 커밋 안 함)
-  granite.config.ts
+  apps-in-toss.config.ts
 index.html             단일 파일 프로토타입 (아티팩트용, 보존)
 tools/build_dict.py    사전 빌드 — 위 둘에 모두 주입
 docs/why-wordchain.md  왜 이 아이템인지
@@ -32,10 +32,20 @@ docs/why-wordchain.md  왜 이 아이템인지
 ```bash
 cd app
 npm install
-npm run dev        # http://localhost:5173
-ait dev            # 토스앱에서 확인
-npm run build      # dist/ 를 콘솔에 업로드
+npm run dev              # http://localhost:5173
+npx ait build            # dist/ → wordbaduk.ait (배포 아티팩트)
+npx ait token add        # 콘솔 API 키 등록 (최초 1회)
+npx ait deploy           # 콘솔로 업로드
 ```
+
+빌드 결과는 **1.0MB**(압축 전 2.5MB)다. 대부분이 사전이고 JS는 29KB다.
+
+> ⚠️ CLI는 **3.x**라 설정 파일이 `apps-in-toss.config.ts`다.
+> 문서에 보이는 `granite.config.ts`는 2.x 형식이니 헷갈리지 말 것.
+> 2.x 프로젝트는 `ait migrate`로 변환한다.
+
+**Node 설치 메모** — 이 맥은 Intel이라 Homebrew가 더는 바이너리를 주지 않는다(Tier 3).
+nodejs.org 공식 tarball을 `~/.local/node`에 풀고 `/usr/local/bin`에 링크했다. 현재 v24.21.0.
 
 `platform.js`가 SDK를 감싸고 있어서 **일반 브라우저에서도 그대로 열린다.**
 토스 밖에서는 Storage가 localStorage로, 햅틱이 `navigator.vibrate`로, 리더보드가 no-op으로 떨어진다.
