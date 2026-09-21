@@ -877,5 +877,9 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     $('noteBody').innerHTML = NOTE;
     go('home');
   }
+  if (typeof window !== 'undefined' && window.__wc) {
+    Object.assign(window.__wc, {st:st, go:go, finish:finish, place:place,
+      showBook:showBook, DEX:DEX_MAIN, HARD:DEX_HARD, RANKS:RANKS, reset:reset});
+  }
   boot();
 }
