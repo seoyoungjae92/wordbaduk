@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>끝말잇기 대국</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+</head>
+<body>
+<div class="app">
+  <header class="head">
+    <h1>끝 말 잇 기 대 국</h1>
+    <div class="players">
+      <div class="player"><span class="stone b"></span>
+        <span class="nm">한글이</span><span class="rk" id="aiRank">3급</span></div>
+      <span class="vs">對</span>
+      <div class="player me">
+        <span class="rk" id="myRank">18급</span><span class="nm">나</span>
+        <span class="stone w"></span></div>
+    </div>
+    <span class="exam-tag" id="examTag"></span>
+  </header>
+
+  <section id="home"></section>
+  <section id="settings"></section>
+  <div class="kibo" id="kibo"></div>
+  <div id="panel"></div>
+
+  <details class="note">
+    <summary>메이커 노트 — 무엇을 보려고 만든 프로토타입인가</summary>
+    <div id="noteBody"></div>
+  </details>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

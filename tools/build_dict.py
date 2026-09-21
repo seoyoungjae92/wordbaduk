@@ -154,6 +154,14 @@ def inject(b):
         html = re.sub(pattern, lambda m, v=value, n=name: f"var {n} = {v};\n",
                       html, count=1, flags=re.S)
     open(HTML, "w", encoding="utf-8").write(html)
+
+    # 미니앱은 사전을 번들에 섞지 않고 자산으로 받는다
+    app_dir = os.path.join(ROOT, "app", "public")
+    if os.path.isdir(app_dir):
+        with open(os.path.join(app_dir, "dict.json"), "w", encoding="utf-8") as f:
+            json.dump({"idx": b["idx"], "tiers": ["\n".join(t) for t in b["tiers"]],
+                       "dexMain": b["dex"], "dexHard": b["hard"]},
+                      f, ensure_ascii=False, separators=(",", ":"))
     return os.path.getsize(HTML)
 
 

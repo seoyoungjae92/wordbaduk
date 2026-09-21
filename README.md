@@ -11,11 +11,50 @@ Play 스토어에 끝말잇기 앱이 28개 넘게 있는데 평점이 3점대�
 
 ## 지금 상태
 
-프로토타입 단일 HTML. 서버도 API도 없이 완전 오프라인으로 돈다.
+미니앱 이식 중. 서버도 API도 없이 완전 오프라인으로 돈다.
 
-- `index.html` — 게임 전체 (사전 포함 2.5MB, 전송 시 압축하면 ~800KB)
-- `tools/build_dict.py` — 사전을 원천 데이터에서 다시 만들어 주입
-- `docs/why-wordchain.md` — 왜 이 아이템인지, 다른 후보를 왜 탈락시켰는지
+```
+app/                   앱인토스 미니앱 (Granite WebView + Vite)
+  index.html
+  src/main.js          진입점 — 사전과 저장값을 먼저 받고 게임을 켠다
+  src/game.js          게임 로직
+  src/platform.js      토스 SDK 어댑터 (없으면 브라우저 폴백)
+  src/style.css
+  public/dict.json     사전 (빌드 산출물, 커밋 안 함)
+  granite.config.ts
+index.html             단일 파일 프로토타입 (아티팩트용, 보존)
+tools/build_dict.py    사전 빌드 — 위 둘에 모두 주입
+docs/why-wordchain.md  왜 이 아이템인지
+```
+
+### 개발
+
+```bash
+cd app
+npm install
+npm run dev        # http://localhost:5173
+ait dev            # 토스앱에서 확인
+npm run build      # dist/ 를 콘솔에 업로드
+```
+
+`platform.js`가 SDK를 감싸고 있어서 **일반 브라우저에서도 그대로 열린다.**
+토스 밖에서는 Storage가 localStorage로, 햅틱이 `navigator.vibrate`로, 리더보드가 no-op으로 떨어진다.
+
+### 왜 WebView인가
+
+Granite은 WebView SDK와 React Native SDK 두 갈래인데 WebView를 골랐다.
+이 게임은 턴제 텍스트 UI라 네이티브 성능이 필요 없고, 이미 다듬어둔 DOM/CSS를 그대로 쓸 수 있다.
+RN으로 가면 화면을 전부 다시 그려야 하는데 그만한 이득이 없다.
+
+### 백엔드는 아직 없다
+
+**리더보드는 토스가 전부 관리한다.** `Game.setLeaderboardScore`로 점수를 올리고
+`openGameCenterLeaderboard`로 순위 화면을 여는 게 전부라, 우리 서버가 필요 없다.
+점수 유효성만 게임 로직에서 책임진다.
+
+서버가 필요해지는 건 토스가 안 해주는 것들이다 —
+**도감 전국 달성률**(「히읗」을 찾은 사람이 몇 명인지), 기록 어뷰징 방어, 원격 설정(`AD_EVERY` 같은 값).
+지금은 없어도 되고, 필요해지면 그때 올린다.
 
 ## 사전
 
