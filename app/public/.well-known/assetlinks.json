@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.korgasm.wordbaduk",
+        "sha256_cert_fingerprints": ["B5:86:1D:90:13:F4:D9:76:E6:EF:9E:3E:37:B4:5C:D3:D4:1D:A6:23:C5:CC:18:33:77:8F:24:7E:3B:32:70:0F"]
+      }
+    }]
