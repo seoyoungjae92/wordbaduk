@@ -8,12 +8,16 @@
     "build": "vite build",
     "preview": "vite preview",
     "ait:dev": "ait dev",
-    "ait:build": "ait build"
+    "ait:build": "ait build",
+    "start": "node server.js"
   },
   "devDependencies": {
     "vite": "^5.4.0"
   },
   "dependencies": {
     "@apps-in-toss/web-framework": "latest"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

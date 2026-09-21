@@ -68,6 +68,24 @@ RN으로 가면 화면을 전부 다시 그려야 하는데 그만한 이득이 
 PWA 호스팅(HTTPS)  →  PWABuilder로 AAB 생성  →  원스토어 / 구글 플레이
 ```
 
+**Railway 배포 설정** (`app/` 을 루트 디렉터리로 지정할 것)
+
+| | |
+|---|---|
+| 빌드 | `npm run build` |
+| 시작 | `node server.js` (`railway.json`에 적혀 있음) |
+| 포트 | `process.env.PORT` |
+
+`server.js`는 Node 기본 모듈만 쓰는 얇은 정적 서버다. 굳이 둔 이유가 몇 가지 있다.
+
+- `.webmanifest`를 `application/manifest+json`으로 내려줘야 한다
+- **`sw.js`는 `no-cache`** — 캐시되면 새 버전이 영영 안 내려간다
+- `Service-Worker-Allowed: /` 가 있어야 루트 스코프 등록이 된다
+- Vite가 해시를 붙인 `assets/`는 `immutable`로 영구 캐시
+
+`app/public/dict.json`은 빌드 산출물이지만 **커밋한다.** 배포처가 저장소만 받아서
+빌드할 수 있어야 하기 때문이다. 사전을 바꾸려면 `tools/build_dict.py`를 돌리고 같이 커밋한다.
+
 PWABuilder를 쓰면 JDK·Android SDK를 로컬에 깔지 않아도 된다.
 
 ⚠️ **구글 플레이 개인 계정 제약** — 2023-11-13 이후 만든 개인 계정은
