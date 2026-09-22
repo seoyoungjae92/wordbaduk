@@ -1,8 +1,13 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.korgasm.wordbaduk",
-        "sha256_cert_fingerprints": ["B5:86:1D:90:13:F4:D9:76:E6:EF:9E:3E:37:B4:5C:D3:D4:1D:A6:23:C5:CC:18:33:77:8F:24:7E:3B:32:70:0F"]
-      }
-    }]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.korgasm.wordbaduk",
+      "sha256_cert_fingerprints": [
+        "A1:04:E5:6F:AC:BF:E2:7C:F4:1D:14:AC:FF:40:31:8C:95:95:59:61:BC:56:8E:20:70:62:3C:16:49:4E:C5:FB",
+        "B5:86:1D:90:13:F4:D9:76:E6:EF:9E:3E:37:B4:5C:D3:D4:1D:A6:23:C5:CC:18:33:77:8F:24:7E:3B:32:70:0F"
+      ]
+    }
+  }
+]
