@@ -183,6 +183,40 @@ python3 tools/build_dict.py             # index.html에 주입
 토스 문서 기준 eCPM은 **리워드 > 전면 > 배너**. 그래서 리워드에 무게를 싣고 전면은 드물게 둔다.
 승급 시험과 첫 판에는 전면광고가 끼어들지 않는다.
 
+## 지금까지 된 것
+
+| | 상태 |
+|---|---|
+| 토스 미니앱 빌드 (`ait build`) | ✅ `wordbaduk.ait` 1.0MB |
+| PWA + Railway 호스팅 | ✅ `wordbaduk-production.up.railway.app` |
+| 개인정보처리방침 | ✅ `/privacy.html` |
+| 안드로이드 AAB (TWA) | ✅ 설치 크기 1.26MB |
+| 구글 플레이 계정 | ✅ 개인 · 개발자명 **코르가즘** |
+| 구글 내부 테스트 | ✅ 실기기 동작 확인 (게임·승급·저장) |
+| **TWA 검증 (주소창 제거)** | ✅ 지문 2개 등록, 구글 API로 확인 |
+| 스토어 이미지 | ✅ 로고(라이트/다크)·썸네일·스크린샷 5장 |
+| 구글 비공개 테스트 12명 × 14일 | 🔲 |
+| 원스토어 등록 | 🔲 진행 중 |
+| 등급분류번호 → 앱인토스 3단계 | 🔲 |
+
+### TWA에서 주소창이 사라지지 않을 때
+
+AAB를 Play Console에 올리면 **구글이 자기 키로 재서명**한다. 그래서 설치된 앱의 지문은
+PWABuilder가 만든 업로드 키가 아니라 **구글 앱 서명 키**다. assetlinks에 업로드 키만
+넣어두면 검증이 조용히 실패하고 주소창이 남는다.
+
+`Play Console > 앱 서명 > 디지털 애셋 링크 JSON` 에서 구글이 만들어주는 스니펫을 받아
+**두 지문을 모두** 넣는다. 반영 확인은 이걸로 한다.
+
+```bash
+curl -s "https://digitalassetlinks.googleapis.com/v1/statements:list\
+?source.web.site=https://wordbaduk-production.up.railway.app\
+&relation=delegate_permission/common.handle_all_urls"
+```
+
+구글이 캐시를 들고 있어서 배포 후 몇 분 걸린다. statement가 지문 수만큼 나오면 통과다.
+앱은 다시 빌드할 필요 없지만, 기기에 설치된 앱은 검증 결과를 캐시하므로 **지우고 재설치**해야 한다.
+
 ## 출시 전 해야 할 것
 
 - [ ] **토스 앱에서 「끝말잇기」 검색** — 미니앱 카탈로그는 웹에 공개돼 있지 않다. 잘 도는 게 있으면 판단이 바뀐다
