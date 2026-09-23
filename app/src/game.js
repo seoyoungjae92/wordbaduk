@@ -217,7 +217,9 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
       if (typeof v.sound === 'boolean') st.sound = v.sound;
       if (typeof v.haptic === 'boolean') st.haptic = v.haptic;
       if (typeof v.hintsUsed === 'number') st.hintsUsed = v.hintsUsed;
-      if (typeof v.ads === 'boolean') st.ads = v.ads;
+      /* 토글을 감춘 동안에는 예전 저장값이 켜져 있어도 무시한다.
+         안 그러면 한 번 켜본 기기는 되돌릴 방법이 없다. */
+      if (ADS_DEFAULT && typeof v.ads === 'boolean') st.ads = v.ads;
       if (typeof v.sinceAd === 'number') st.sinceAd = v.sinceAd;
       if (typeof v.best === 'number') st.best = v.best;
       st.difficulty = Math.min(1, Math.max(rankFloor(), st.difficulty));
@@ -732,9 +734,14 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
       '<div class="hero" style="padding-block:34px 4px"><h1 style="font-size:23px">설 정</h1></div>' +
       row('swSound', '효과음', '돌 놓는 소리, 초읽기, 승패', st.sound) +
       row('swHaptic', '진동', '수를 둘 때 짧게 울립니다', st.haptic) +
-      row('swAds', '광고', st.ads
-            ? '힌트·무르기는 리워드, 전면은 ' + AD_EVERY + '판에 한 번'
-            : '꺼짐 — 힌트는 한 판에 한 번 무료입니다', st.ads) +
+      /* 광고를 붙이기 전(ADS_DEFAULT=false)에는 이 줄을 아예 내보내지 않는다.
+         켜봐야 나오는 건 진짜 광고가 아니라 자리표시자라, 심사자가 열어보면
+         미완성 기능으로 읽힌다. 사업자등록 끝나고 플래그만 켜면 그대로 돌아온다. */
+      (ADS_DEFAULT
+        ? row('swAds', '광고', st.ads
+              ? '힌트·무르기는 리워드, 전면은 ' + AD_EVERY + '판에 한 번'
+              : '꺼짐 — 힌트는 한 판에 한 번 무료입니다', st.ads)
+        : '') +
       '<p class="sect">기록</p>' +
       '<div class="bookrow"><span>최장 수순</span><b>' + st.best + '수</b></div>' +
       '<div class="bookrow"><span>둔 말</span><b>' + st.dexWords + '</b></div>' +
@@ -755,8 +762,10 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     }
     toggle('swSound', 'sound');
     toggle('swHaptic', 'haptic');
-    toggle('swAds', 'ads');
-    $('swAds').addEventListener('click', function(){ renderSettings(); });
+    if (ADS_DEFAULT){
+      toggle('swAds', 'ads');
+      $('swAds').addEventListener('click', function(){ renderSettings(); });
+    }
     $('sReset').addEventListener('click', function(){
       if (this.dataset.armed){
         try{ platform.storage.remove(SAVE_KEY); }catch(e){}
@@ -831,50 +840,10 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     setTimeout(function(){ place(opener, 'ai'); startTurn(); }, 420);
   }
 
-  var NOTE = '<div>' +
-    '<b>사전이 진짜입니다.</b> 표준국어대사전 계열 2~4음절 <b>281,389개</b>를 통째로 넣었습니다. ' +
-    '「유보」「유륜」「유성」「유한」 전부 통합니다. 서버도 API도 쓰지 않는 <b>완전 오프라인</b>입니다.' +
-    '<hr>' +
-    '<b>한글이는 24,912개만 압니다.</b> 명사 사전으로 거른 말들이라 「내가」「거야」 같은 건 두지 않습니다. ' +
-    '한글이가 모르는 말을 두면 금색 돌로 놓이고 도감의 <b>낯선 말</b>에 쌓입니다. ' +
-    '그 말로 길이 끊기면 그대로 이깁니다.' +
-    '<hr>' +
-    '<b>질 때는 고민합니다.</b> 처음엔 이길 때든 질 때든 620밀리초로 똑같이 뒀더니, ' +
-    '갑자기 못 두는 순간이 그대로 들통났습니다. 지금은 세 가지가 걸려 있습니다 — ' +
-    '<b>①</b> 질 때는 반드시 오래 생각합니다(2.7~4.2초, 「물」… 「물」… 하고 되뇝니다). ' +
-    '<b>①-1</b> 그리고 <b>빡빡한 자리에서만 막힙니다.</b> 실측해보니 한글이가 둘 수 있는 말이 ' +
-    '61개를 넘는 국면이 <b>62.8%</b>인데, 거기서 포기하면 그 자체가 들통납니다. ' +
-    '지금은 4개 이하면 그대로, 13~30개면 40%로, <b>61개가 넘으면 아예 막히지 않습니다.</b> ' +
-    '<b>②</b> 그런데 <b>오래 생각하고도 두는 경우가 더 많습니다.</b> 이게 없으면 뜸들이는 것 자체가 신호가 됩니다. ' +
-    '<b>③</b> 둘 수 있는 말이 적을수록, 그리고 지고 있을수록 평소에도 더 뜸을 들입니다. 실측하면 <b>고민했을 때 지는 비율이 11~31%</b>입니다. 대부분은 뜸들이고 나서 둡니다.' +
-    '<hr>' +
-    '<b>급수가 한글이의 바닥을 정합니다.</b> 난이도가 승패만 따라 움직이면 승률이 59%에 수렴해서 ' +
-    '<b>오래 한 사람은 누구나 3단</b>이 됩니다. 그런 급수는 자랑이 안 됩니다. ' +
-    '그래서 승급할 때마다 한글이가 내려갈 수 있는 바닥도 같이 올라갑니다 — ' +
-    '18급 0.10 / 10급 0.31 / 1급 0.65 / 3단 0.82. 초반은 완만하고 위로 갈수록 가팔라서 ' +
-    '<b>어딘가에서 반드시 막힙니다.</b> 막히는 자리가 곧 실력입니다.' +
-    '<hr>' +
-    '<b>어휘가 모자라서 지는 일은 없습니다.</b> 처음엔 난이도로 한글이의 어휘를 잘라봤는데, ' +
-    '「스포츠」 한 번에 2수 만에 끝나버렸습니다. 어휘 구멍으로 지는 건 실력이 아니라 사고입니다. ' +
-    '그래서 한글이는 <b>늘 24,912개를 다 쓰고</b>, 난이도는 두 가지만 정합니다 — ' +
-    '<b>어느 단의 말을 고를지</b>(쉬울수록 흔한 말), 그리고 <b>말이 안 떠오를 확률</b>(최대 14%, 8수 이후에만). ' +
-    '사람이 한 번씩 막히는 것과 같은 모양입니다.' +
-    '<hr>' +
-    '<b>초반 8수 안에는 한방단어를 쓸 수 없습니다.</b> 「스포츠」처럼 사전에 이을 말이 없는 말이 ' +
-    '첫 수에 나오면 대국이 성립하지 않습니다. 8수가 지나면 그대로 승리입니다.' +
-    '<hr>' +
-    '<b>AI가 하는 일.</b> 열린 어휘 안에서 이을 말을 뽑고, 각 수가 상대에게 남기는 선택지 수를 ' +
-    '사전 전체 기준으로 셉니다. 여지가 많은 수를 둘지 좁은 수를 둘지도 난이도가 정합니다. ' +
-    '이기면 0.09씩 조이고 지면 0.13씩 풉니다. 푸는 쪽이 빠른 건 연패가 이탈로 직결되기 때문입니다.' +
-    '<hr>' +
-    '<b>두음법칙.</b> 「계란」 다음에 「난관」이 됩니다. 실제 끝말잇기의 다툼이 여기서 나서, ' +
-    '없으면 가짜처럼 느껴집니다.' +
-    '</div>';
 
   function boot(){
     load();
     $('myRank').textContent = RANKS[st.rankIdx];
-    $('noteBody').innerHTML = NOTE;
     go('home');
   }
   if (typeof window !== 'undefined' && window.__wc) {
