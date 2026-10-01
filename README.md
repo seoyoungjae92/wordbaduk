@@ -10,10 +10,10 @@
 | 앱인토스 | 심사 중 |
 
 <p>
-  <img src="store/one/shot-1-720x1280.png" width="200">
-  <img src="store/one/shot-2-720x1280.png" width="200">
-  <img src="store/one/shot-3-720x1280.png" width="200">
-  <img src="store/one/shot-4-720x1280.png" width="200">
+  <img src="store/screens/1-home.png" width="200" alt="홈 — 급수와 기록">
+  <img src="store/screens/2-game.png" width="200" alt="대국 중">
+  <img src="store/screens/3-codex.png" width="200" alt="끝내는 글자 도감">
+  <img src="store/screens/4-dark.png" width="200" alt="다크 모드">
 </p>
 
 ---
@@ -50,7 +50,10 @@ app/
 tools/build_dict.py      사전 빌드 파이프라인 (195줄)
 docs/why-wordchain.md    왜 이 아이템인가
 docs/maker-note.md       설계 노트 (난이도 상수와 실측치)
-store/                   스토어 등록 자산
+store/
+  screens/               실제 앱 화면 (위 스크린샷)
+  one/                   원스토어 등록 자산과 등록 문구
+  one/upload/            원스토어 업로드가 통과한 경량본 (아래 참조)
 index.html               단일 파일 프로토타입 (보존용)
 ```
 
