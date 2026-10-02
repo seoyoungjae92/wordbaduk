@@ -3,11 +3,11 @@
     --bg:#A8834A;
     --board:#DCB473; --board-2:#D2A662;
     --line:rgba(80,56,22,.38); --line-hard:rgba(80,56,22,.72);
-    --ink:#241B0E; --ink-soft:#6E5936;
+    --ink:#241B0E; --ink-soft:#4A3A1E;
     --stone-b:#1B1712; --stone-b-ink:#F2EADC;
     --stone-w:#F6F1E5; --stone-w-ink:#241B0E;
-    --rare:#8A5A12; --rare-ink:#FFF4DC;
-    --urgent:#A82B1B; --accent:#2C5B4E; --track:rgba(80,56,22,.22);
+    --rare:#5A3604; --rare-ink:#FFF4DC;
+    --urgent:#A82B1B; --accent:#1E4237; --track:rgba(80,56,22,.22);
     --shadow:0 1px 0 rgba(255,245,220,.35) inset, 0 14px 32px rgba(50,32,8,.28);
   }
   @media (prefers-color-scheme: dark){
@@ -31,6 +31,15 @@
     --rare:#E0AC55; --rare-ink:#241B0E;
     --urgent:#E8705A; --accent:#7FBCA8; --track:rgba(237,232,216,.18);
     --shadow:0 1px 0 rgba(255,235,190,.07) inset, 0 14px 32px rgba(0,0,0,.5);
+  }
+
+  /* 타이포 스케일. 전에는 23종이 0.5px 차이로 섞여 있어서 위계가 안 보였다.
+     9단계로 줄이고 모든 font-size를 여기로 모았다. */
+  :root{
+    --t-1:10px; --t-2:12px; --t-3:14px; --t-4:16px; --t-5:19px;
+    --t-6:23px; --t-7:27px; --t-8:31px; --t-9:36px;
+    /* 여백·반경 단위. 4의 배수로 맞춘다. */
+    --r-sm:6px; --r-md:14px; --r-lg:24px;
   }
 
   /* 안전 영역. viewport-fit=cover라 화면이 노치 아래까지 깔린다 —
@@ -59,15 +68,15 @@
 
   .head{padding-block:18px 12px; border-bottom:1.5px solid var(--line-hard)}
   .head h1{
-    font-family:"Gowun Batang",serif; font-size:20px; margin:0;
+    font-family:"Gowun Batang",serif; font-size:var(--t-5); margin:0;
     letter-spacing:.14em; text-align:center; font-weight:700;
   }
   .players{display:flex; align-items:center; gap:10px; margin-top:14px}
   .player{display:flex; align-items:center; gap:8px; flex:1; min-width:0}
   .player.me{justify-content:flex-end; text-align:right}
-  .player .nm{font-size:13.5px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .player .rk{font-family:"Gowun Batang",serif; font-size:16px; color:var(--accent); font-weight:700; white-space:nowrap}
-  .vs{font-family:"Gowun Batang",serif; font-size:13px; color:var(--ink-soft); flex:none}
+  .player .nm{font-size:var(--t-3); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .player .rk{font-family:"Gowun Batang",serif; font-size:var(--t-4); color:var(--accent); font-weight:700; white-space:nowrap}
+  .vs{font-family:"Gowun Batang",serif; font-size:var(--t-3); color:var(--ink-soft); flex:none}
   .stone{width:17px; height:17px; border-radius:50%; flex:none}
   .stone.b{background:radial-gradient(circle at 34% 30%, #5c564d, var(--stone-b) 62%)}
   .stone.w{background:radial-gradient(circle at 34% 30%, #ffffff, var(--stone-w) 66%); border:1px solid rgba(80,56,22,.3)}
@@ -90,21 +99,21 @@
   /* 홈 */
   .hero{padding-block:44px 8px; text-align:center}
   .hero h1{
-    font-family:"Gowun Batang",serif; font-size:31px; margin:0;
+    font-family:"Gowun Batang",serif; font-size:var(--t-8); margin:0;
     letter-spacing:.2em; font-weight:700; line-height:1.5;
   }
-  .hero p{font-size:13px; color:var(--ink-soft); margin:12px 0 0; letter-spacing:.06em}
+  .hero p{font-size:var(--t-3); color:var(--ink-soft); margin:12px 0 0; letter-spacing:.06em}
   .myrank{
-    margin-top:30px; padding:20px 18px; border:1.5px solid var(--line-hard); border-radius:6px;
+    margin-top:32px; padding:20px 18px; border:1.5px solid var(--line-hard); border-radius:var(--r-sm);
   }
   .myrank .top{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px}
-  .myrank .g{font-family:"Gowun Batang",serif; font-size:34px; font-weight:700; line-height:1}
-  .myrank .g small{font-size:14px; color:var(--ink-soft); margin-left:6px; font-family:"Noto Sans KR",sans-serif}
-  .myrank .r{font-size:12.5px; color:var(--ink-soft); text-align:right; word-break:keep-all}
-  .stats{display:flex; justify-content:space-between; gap:8px; margin-top:22px}
+  .myrank .g{font-family:"Gowun Batang",serif; font-size:var(--t-9); font-weight:700; line-height:1}
+  .myrank .g small{font-size:var(--t-3); color:var(--ink-soft); margin-left:6px; font-family:"Noto Sans KR",sans-serif}
+  .myrank .r{font-size:var(--t-2); color:var(--ink-soft); text-align:right; word-break:keep-all}
+  .stats{display:flex; justify-content:space-between; gap:8px; margin-top:24px}
   .stats div{text-align:center; flex:1; min-width:0}
-  .stats .n{font-family:"Gowun Batang",serif; font-size:24px; font-weight:700; display:block; line-height:1.1}
-  .stats .t{font-size:11px; color:var(--ink-soft)}
+  .stats .n{font-family:"Gowun Batang",serif; font-size:var(--t-6); font-weight:700; display:block; line-height:1.1}
+  .stats .t{font-size:var(--t-2); color:var(--ink-soft)}
   .stats .hi .n{color:var(--rare)}
   .stats .rec .n{color:var(--accent)}
   .stats .t{white-space:nowrap}
@@ -116,8 +125,8 @@
     display:flex; align-items:center; justify-content:space-between; gap:14px;
     padding:17px 2px; border-bottom:1px solid var(--line-hard);
   }
-  .setrow .lbl{font-size:16px; font-weight:500}
-  .setrow .desc{font-size:12px; color:var(--ink-soft); margin-top:3px; word-break:keep-all}
+  .setrow .lbl{font-size:var(--t-4); font-weight:500}
+  .setrow .desc{font-size:var(--t-2); color:var(--ink-soft); margin-top:3px; word-break:keep-all}
   .sw{
     width:56px; height:32px; border-radius:16px; border:1.5px solid var(--line-hard);
     background:transparent; position:relative; cursor:pointer; flex:none; padding:0;
@@ -136,13 +145,13 @@
   .full{padding-block:24px}
   .full .frame{
     min-height:360px; display:grid; place-items:center; gap:10px; padding:20px;
-    border:1.5px solid var(--line-hard); border-radius:6px;
+    border:1.5px solid var(--line-hard); border-radius:var(--r-sm);
     background:var(--stone-b); color:var(--stone-b-ink); text-align:center;
   }
-  .full .frame .big{font-family:"Gowun Batang",serif; font-size:22px; letter-spacing:.12em}
-  .full .frame .small{font-size:12.5px; opacity:.65; word-break:keep-all}
+  .full .frame .big{font-family:"Gowun Batang",serif; font-size:var(--t-6); letter-spacing:.12em}
+  .full .frame .small{font-size:var(--t-2); opacity:.65; word-break:keep-all}
   .full .tag{
-    display:block; text-align:center; font-size:10.5px; letter-spacing:.2em;
+    display:block; text-align:center; font-size:var(--t-1); letter-spacing:.2em;
     color:var(--ink-soft); margin-bottom:10px;
   }
 
@@ -155,30 +164,31 @@
   @keyframes place{from{opacity:0; transform:translateY(-5px)}}
   @media (prefers-reduced-motion:reduce){ .mv{animation:none} }
   .mv .no{
-    font-family:"Gowun Batang",serif; font-size:11.5px; color:var(--ink-soft);
+    font-family:"Gowun Batang",serif; font-size:var(--t-2); color:var(--ink-soft);
     flex:none; width:20px; text-align:center;
   }
   .word{
-    display:inline-flex; align-items:center; gap:7px; padding:9px 15px; border-radius:22px;
-    font-size:18px; font-weight:500; letter-spacing:.02em;
+    display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:var(--r-md);
+    font-size:var(--t-5); font-weight:500; letter-spacing:.02em;
   }
   .word.b{background:var(--stone-b); color:var(--stone-b-ink)}
   .word.w{background:var(--stone-w); color:var(--stone-w-ink); box-shadow:0 1px 3px rgba(60,40,10,.2)}
   .word.rare{background:var(--rare); color:var(--rare-ink); box-shadow:none}
   .word .seal{
-    font-family:"Gowun Batang",serif; font-size:10.5px; font-weight:700;
-    border:1px solid currentColor; border-radius:3px; padding:1px 4px; opacity:.85; letter-spacing:.04em;
+    font-family:"Gowun Batang",serif; font-size:var(--t-1); font-weight:700;
+    border:1px solid currentColor; border-radius:var(--r-sm); padding:1px 4px; opacity:.85; letter-spacing:.04em;
   }
 
   .turn{
     border-top:1.5px solid var(--line-hard); padding-block:15px 0;
     display:flex; align-items:baseline; justify-content:space-between; gap:12px;
   }
-  .need{font-size:15px; color:var(--ink-soft)}
-  .need b{font-family:"Gowun Batang",serif; font-size:27px; color:var(--ink); margin:0 2px; font-weight:700}
+  .need{font-size:var(--t-4); color:var(--ink-soft)}
+  .need b{font-family:"Gowun Batang",serif; font-size:var(--t-7); color:var(--ink); margin:0 2px; font-weight:700}
+  /* 초읽기는 화면에서 가장 급한 숫자인데 보조색으로 흐려져 있었다. 본문색으로 올린다. */
   .clock{
-    font-family:"Gowun Batang",serif; font-size:27px; font-weight:700;
-    font-variant-numeric:tabular-nums; color:var(--ink-soft);
+    font-family:"Gowun Batang",serif; font-size:var(--t-7); font-weight:700;
+    font-variant-numeric:tabular-nums; color:var(--ink);
   }
   .clock.hot{color:var(--urgent)}
 
@@ -186,15 +196,15 @@
   .entry input{
     flex:1; min-width:0; min-height:56px; box-sizing:border-box; padding:0 16px;
     background:var(--stone-w); color:var(--stone-w-ink);
-    border:2px solid var(--line-hard); border-radius:6px;
-    font:inherit; font-size:19px; font-weight:500;
+    border:2px solid var(--line-hard); border-radius:var(--r-sm);
+    font:inherit; font-size:var(--t-5); font-weight:500;
   }
   .entry input::placeholder{color:rgba(80,56,22,.45)}
   .entry input:focus-visible{outline:3px solid var(--accent); outline-offset:1px}
   .btn{
     min-height:56px; padding:0 22px; flex:none; box-sizing:border-box;
     background:var(--stone-b); color:var(--stone-b-ink);
-    border:none; border-radius:6px; font:inherit; font-size:17px; font-weight:700;
+    border:none; border-radius:var(--r-sm); font:inherit; font-size:var(--t-4); font-weight:700;
     cursor:pointer; letter-spacing:.06em;
   }
   .btn:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
@@ -202,7 +212,7 @@
   .btn.wide{width:100%; margin-top:10px; padding:0}
   .btn.ghost{background:transparent; color:var(--ink); border:1.5px solid var(--line-hard)}
 
-  .msg{margin-top:11px; font-size:14px; min-height:21px; color:var(--urgent); font-weight:500; word-break:keep-all}
+  .msg{margin-top:12px; font-size:var(--t-3); min-height:20px; color:var(--urgent); font-weight:500; word-break:keep-all}
   .msg.ok{color:var(--accent)}
   .msg.rare{color:var(--rare); font-weight:700}
   .need b.hint{color:var(--rare)}
@@ -212,8 +222,8 @@
   .lnk{
     min-height:44px; min-width:112px; padding:0 16px; box-sizing:border-box;
     display:inline-flex; align-items:center; justify-content:center;
-    background:none; border:1.5px solid var(--line-hard); border-radius:6px;
-    color:var(--ink-soft); font:inherit; font-size:14px; font-weight:500;
+    background:none; border:1.5px solid var(--line-hard); border-radius:var(--r-sm);
+    color:var(--ink-soft); font:inherit; font-size:var(--t-3); font-weight:500;
     letter-spacing:.02em; cursor:pointer;
   }
   .lnk:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
@@ -224,42 +234,42 @@
   .lnk.quit{border-color:var(--line)}
   .lnk.quit[data-armed]{border-color:var(--urgent); color:var(--urgent); font-weight:700}
   .adbox{
-    margin-top:12px; padding:14px; border:1.5px dashed var(--line-hard); border-radius:6px; text-align:center;
+    margin-top:12px; padding:14px; border:1.5px dashed var(--line-hard); border-radius:var(--r-sm); text-align:center;
   }
-  .adbox .tag{font-size:10.5px; letter-spacing:.2em; color:var(--ink-soft); display:block; margin-bottom:8px}
-  .adbox p{margin:0 0 12px; font-size:14px; color:var(--ink); word-break:keep-all}
+  .adbox .tag{font-size:var(--t-1); letter-spacing:.2em; color:var(--ink-soft); display:block; margin-bottom:8px}
+  .adbox p{margin:0 0 12px; font-size:var(--t-3); color:var(--ink); word-break:keep-all}
   .adbox .pair{display:flex; gap:8px}
   .adbox .pair button{flex:1; min-height:50px; margin-top:0}
   .adplay{
     min-height:120px; display:grid; place-items:center; gap:8px;
-    border:1.5px solid var(--line-hard); border-radius:5px; background:var(--stone-b);
+    border:1.5px solid var(--line-hard); border-radius:var(--r-sm); background:var(--stone-b);
     color:var(--stone-b-ink);
   }
-  .adplay .big{font-family:"Gowun Batang",serif; font-size:19px; letter-spacing:.1em}
-  .adplay .small{font-size:12px; opacity:.7}
+  .adplay .big{font-family:"Gowun Batang",serif; font-size:var(--t-5); letter-spacing:.1em}
+  .adplay .small{font-size:var(--t-2); opacity:.7}
 
   .over{text-align:center; padding-block:10px}
-  .over h2{font-family:"Gowun Batang",serif; font-size:29px; margin:0 0 6px; font-weight:700}
-  .over .why{font-size:15px; color:var(--ink-soft); margin:0 0 4px; word-break:keep-all}
+  .over h2{font-family:"Gowun Batang",serif; font-size:var(--t-7); margin:0 0 6px; font-weight:700}
+  .over .why{font-size:var(--t-4); color:var(--ink-soft); margin:0 0 4px; word-break:keep-all}
   .rankbar{margin:20px 0 6px}
-  .rankbar .lab{display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft); margin-bottom:6px}
-  .track{height:9px; background:var(--track); border-radius:5px; overflow:hidden}
-  .fill{height:100%; background:var(--accent); border-radius:5px; transition:width .5s ease}
+  .rankbar .lab{display:flex; justify-content:space-between; font-size:var(--t-2); color:var(--ink-soft); margin-bottom:6px}
+  .track{height:9px; background:var(--track); border-radius:var(--r-sm); overflow:hidden}
+  .fill{height:100%; background:var(--accent); border-radius:var(--r-sm); transition:width .5s ease}
   .dex{
-    margin-top:18px; padding:14px 10px; border:1.5px solid var(--line-hard); border-radius:6px;
+    margin-top:16px; padding:16px 12px; border:1.5px solid var(--line-hard); border-radius:var(--r-sm);
     display:flex; justify-content:space-around; gap:8px;
   }
   .dex div{text-align:center; min-width:0}
-  .dex .n{font-family:"Gowun Batang",serif; font-size:26px; font-weight:700; display:block; line-height:1.1}
-  .dex .t{font-size:11px; color:var(--ink-soft); letter-spacing:.04em}
+  .dex .n{font-family:"Gowun Batang",serif; font-size:var(--t-7); font-weight:700; display:block; line-height:1.1}
+  .dex .t{font-size:var(--t-2); color:var(--ink-soft); letter-spacing:.04em}
   .dex .hi .n{color:var(--rare)}
-  .adslot{margin-top:16px; padding:13px; border:1.5px dashed var(--line-hard); border-radius:6px}
-  .adslot .tag{font-size:10.5px; letter-spacing:.2em; color:var(--ink-soft); display:block; margin-bottom:9px; text-align:center}
+  .adslot{margin-top:16px; padding:12px; border:1.5px dashed var(--line-hard); border-radius:var(--r-sm)}
+  .adslot .tag{font-size:var(--t-1); letter-spacing:.2em; color:var(--ink-soft); display:block; margin-bottom:8px; text-align:center}
 
   /* 승급 시험 */
   .exam-tag{
     display:block; text-align:center; font-family:"Gowun Batang",serif;
-    font-size:12.5px; letter-spacing:.3em; color:var(--urgent);
+    font-size:var(--t-2); letter-spacing:.3em; color:var(--urgent);
     padding-top:8px; font-weight:700;
   }
   .app.exam .head{border-bottom-color:var(--urgent)}
@@ -268,20 +278,20 @@
   .dexbtn{
     width:100%; min-height:52px; margin-top:10px; box-sizing:border-box;
     background:transparent; color:var(--ink); border:1.5px solid var(--line-hard);
-    border-radius:6px; font:inherit; font-size:16px; font-weight:700; cursor:pointer;
+    border-radius:var(--r-sm); font:inherit; font-size:var(--t-4); font-weight:700; cursor:pointer;
     letter-spacing:.06em;
   }
   .dexbtn:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
-  .book h2{font-family:"Gowun Batang",serif; font-size:22px; margin:2px 0 4px; letter-spacing:.1em; text-align:center}
-  .book .sub{font-size:13px; color:var(--ink-soft); text-align:center; margin:0 0 18px; word-break:keep-all}
+  .book h2{font-family:"Gowun Batang",serif; font-size:var(--t-6); margin:2px 0 4px; letter-spacing:.1em; text-align:center}
+  .book .sub{font-size:var(--t-3); color:var(--ink-soft); text-align:center; margin:0 0 18px; word-break:keep-all}
   .grid{display:grid; grid-template-columns:repeat(5,1fr); gap:8px}
   .cell{
-    aspect-ratio:1/1; border:1.5px solid var(--line-hard); border-radius:5px;
+    aspect-ratio:1/1; border:1.5px solid var(--line-hard); border-radius:var(--r-sm);
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
     background:transparent;
   }
-  .cell .s{font-family:"Gowun Batang",serif; font-size:23px; font-weight:700; line-height:1}
-  .cell .w{font-size:9.5px; color:var(--ink-soft); letter-spacing:-.02em}
+  .cell .s{font-family:"Gowun Batang",serif; font-size:var(--t-6); font-weight:700; line-height:1}
+  .cell .w{font-size:var(--t-1); color:var(--ink-soft); letter-spacing:-.02em}
   .cell.got{background:var(--rare); border-color:var(--rare)}
   .cell.got .s{color:var(--rare-ink)}
   .cell.got .w{color:var(--rare-ink); opacity:.8}
@@ -289,19 +299,19 @@
   .cell.lock{border-style:dashed; opacity:.55}
   .bookrow{
     display:flex; justify-content:space-between; align-items:baseline;
-    padding:11px 2px; border-bottom:1px solid var(--rule, var(--line)); font-size:14px;
+    padding:12px 2px; border-bottom:1px solid var(--rule, var(--line)); font-size:var(--t-3);
   }
-  .bookrow b{font-family:"Gowun Batang",serif; font-size:19px}
+  .bookrow b{font-family:"Gowun Batang",serif; font-size:var(--t-5)}
   .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
   .chip{
-    font-size:13px; padding:5px 10px; border-radius:14px;
+    font-size:var(--t-3); padding:4px 12px; border-radius:var(--r-md);
     background:var(--rare); color:var(--rare-ink); font-weight:500;
   }
-  .empty{font-size:13px; color:var(--ink-soft); padding:10px 0; word-break:keep-all}
-  .sect{font-size:11.5px; letter-spacing:.2em; color:var(--ink-soft); margin:22px 0 8px}
+  .empty{font-size:var(--t-3); color:var(--ink-soft); padding:10px 0; word-break:keep-all}
+  .sect{font-size:var(--t-2); letter-spacing:.2em; color:var(--ink-soft); margin:22px 0 8px}
 
-  .note{margin-top:22px; font-size:13px; color:var(--ink-soft)}
-  .note summary{cursor:pointer; letter-spacing:.06em; padding:8px 0; font-size:12px}
+  .note{margin-top:24px; font-size:var(--t-3); color:var(--ink-soft)}
+  .note summary{cursor:pointer; letter-spacing:.06em; padding:8px 0; font-size:var(--t-2)}
   .note div{padding-top:4px; line-height:1.75; word-break:keep-all}
   .note b{color:var(--ink); font-weight:700}
   .note hr{border:none; border-top:1px solid var(--line-hard); margin:11px 0}
