@@ -503,7 +503,10 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     }
     /* 급수가 정해진 뒤에 바닥을 적용한다. 승급하면 그 자리에서 바로 세진다. */
     st.sinceAd++;
-    var record = st.moves.length > st.best;
+    /* 최장 수순은 '이긴 판'만 센다.
+       지면서 길게 끈 판이 기록이 되면, 버티기만 해도 순위가 오른다.
+       이기면서 길게 가는 쪽이 어렵고, 그게 실력이다. */
+    var record = win && st.moves.length > st.best;
     if (record) st.best = st.moves.length;
     st.difficulty = Math.min(1, Math.max(rankFloor(), st.difficulty));
     save();

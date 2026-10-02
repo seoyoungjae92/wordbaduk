@@ -30,7 +30,9 @@ boot();
 
 /* 서비스 워커. TWA(안드로이드 래퍼)가 요구하는 조건이기도 하고,
    웹에서 열었을 때 오프라인으로 돌게 해준다. 실패해도 게임은 그대로 돈다. */
-if ('serviceWorker' in navigator) {
+/* 토스 안에서는 등록하지 않는다. 미니앱은 번들을 통째로 받아 쓰기 때문에
+   서비스 워커가 끼면 새 번들이 와도 낡은 화면이 남는다. 웹/TWA에서만 필요하다. */
+if (!platform.inToss() && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register(import.meta.env.BASE_URL + 'sw.js', { scope: import.meta.env.BASE_URL })

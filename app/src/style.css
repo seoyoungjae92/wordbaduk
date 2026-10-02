@@ -33,6 +33,13 @@
     --shadow:0 1px 0 rgba(255,235,190,.07) inset, 0 14px 32px rgba(0,0,0,.5);
   }
 
+  /* 안전 영역. viewport-fit=cover라 화면이 노치 아래까지 깔린다 —
+     여백을 직접 주지 않으면 제목이 카메라에 붙는다.
+     토스 SDK가 값을 주면 platform.js가 이 변수를 덮어쓴다. */
+  :root{
+    --sa-top: env(safe-area-inset-top, 0px);
+    --sa-bottom: env(safe-area-inset-bottom, 0px);
+  }
   html,body{height:100%}
   body{
     margin:0; background:var(--bg); color:var(--ink);
@@ -47,7 +54,7 @@
       linear-gradient(160deg, var(--board) 0%, var(--board-2) 100%);
     box-shadow:var(--shadow);
     display:flex; flex-direction:column;
-    padding:0 18px 24px; box-sizing:border-box;
+    padding:calc(var(--sa-top) + 8px) 18px calc(24px + var(--sa-bottom)); box-sizing:border-box;
   }
 
   .head{padding-block:18px 12px; border-bottom:1.5px solid var(--line-hard)}
