@@ -734,9 +734,9 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
       '<div class="menu">' +
         '<button class="btn" id="hStart">대국 시작</button>' +
         (st.examReady && nextRank ? '<button class="btn ghost" id="hExam">' + nextRank + ' 승급 시험</button>' : '') +
-        '<button class="dexbtn" id="hBook">단어 도감 ' + cnt.got + ' / ' +
+        '<button class="dexbtn lift" id="hBook">단어 도감 ' + cnt.got + ' / ' +
           (cnt.open2 ? cnt.total : DEX_MAIN.length) + '</button>' +
-        '<button class="dexbtn" id="hSet">설정</button>' +
+        '<button class="dexbtn quiet" id="hSet">설정</button>' +
       '</div>';
     $('hStart').addEventListener('click', function(){ SFX.tap(); startGame(false); });
     if ($('hExam')) $('hExam').addEventListener('click', function(){ SFX.tap(); startGame(true); });
@@ -770,8 +770,8 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
         (dexCount().open2 ? dexCount().total : DEX_MAIN.length) + '</b></div>' +
       '<div class="bookrow"><span>급수</span><b>' + RANKS[st.rankIdx] + '</b></div>' +
       '<div class="bookrow"><span>본 힌트</span><b>' + st.hintsUsed + '</b></div>' +
-      '<button class="dexbtn" id="sReset" style="margin-top:22px">기록 지우기</button>' +
-      '<button class="btn wide" id="sBack">돌아가기</button>';
+      '<button class="dexbtn danger" id="sReset" style="margin-top:24px">기록 지우기</button>' +
+      '<button class="dexbtn quiet" id="sBack">돌아가기</button>';
     function toggle(id, key){
       $(id).addEventListener('click', function(){
         st[key] = !st[key];

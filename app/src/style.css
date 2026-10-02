@@ -7,7 +7,7 @@
     --stone-b:#1B1712; --stone-b-ink:#F2EADC;
     --stone-w:#F6F1E5; --stone-w-ink:#241B0E;
     --rare:#5A3604; --rare-ink:#FFF4DC;
-    --urgent:#A82B1B; --accent:#1E4237; --track:rgba(80,56,22,.22);
+    --urgent:#7A1A0F; --accent:#1E4237; --track:rgba(80,56,22,.22);
     --shadow:0 1px 0 rgba(255,245,220,.35) inset, 0 14px 32px rgba(50,32,8,.28);
   }
   @media (prefers-color-scheme: dark){
@@ -82,9 +82,15 @@
   .stone.w{background:radial-gradient(circle at 34% 30%, #ffffff, var(--stone-w) 66%); border:1px solid rgba(80,56,22,.3)}
 
   .kibo{
-    flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:9px;
+    flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:8px;
     padding-block:16px; overflow-y:auto; overscroll-behavior:contain;
+    /* 위로 스크롤된 수가 헤더 선에 뚝 잘려서 깨진 것처럼 보였다.
+       상단만 흐려지면 '위에 더 있다'는 신호가 된다. */
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 22px);
+    mask-image:linear-gradient(to bottom, transparent 0, #000 22px);
   }
+  /* 종국 화면은 기보가 안 흐르므로 마스크를 걷는다 */
+  .app.done .kibo{-webkit-mask-image:none; mask-image:none}
   /* 종국 화면은 성적표가 길어서 페이지 전체가 흐르게 둔다 */
   .app.done{height:auto; min-height:100%}
   /* 화면 전환 */
@@ -281,6 +287,12 @@
     border-radius:var(--r-sm); font:inherit; font-size:var(--t-4); font-weight:700; cursor:pointer;
     letter-spacing:.06em;
   }
+  /* 2순위(도감)와 3순위(설정)가 같은 모양이면 위계가 없다.
+     도감은 살짝 채워 올리고, 설정은 테두리를 지워 내린다. */
+  .dexbtn.lift{background:var(--track); border-color:var(--line-hard)}
+  .dexbtn.quiet{border-color:transparent; color:var(--ink-soft); font-weight:500}
+  /* 되돌릴 수 없는 행동은 경고색 테두리로만 — 채우지는 않는다 */
+  .dexbtn.danger{border-color:var(--urgent); color:var(--urgent)}
   .dexbtn:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
   .book h2{font-family:"Gowun Batang",serif; font-size:var(--t-6); margin:2px 0 4px; letter-spacing:.1em; text-align:center}
   .book .sub{font-size:var(--t-3); color:var(--ink-soft); text-align:center; margin:0 0 18px; word-break:keep-all}
