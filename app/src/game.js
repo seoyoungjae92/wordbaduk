@@ -363,19 +363,37 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
       '<p class="msg" id="msg"></p>' +
       '<div class="aux">' +
         (st.hint
-          ? '<span class="lnk on" style="text-decoration:none">힌트를 받았습니다</span>'
+          ? '<button class="lnk on" disabled>힌트를 받았습니다</button>'
           : (st.ads || st.freeHint
               ? '<button class="lnk" id="hint">힌트 보기' + (st.ads ? ' (광고)' : '') + '</button>'
-              : '<span class="lnk" style="text-decoration:none;opacity:.5">힌트를 다 썼습니다</span>')) +
-        '<button class="lnk" id="give">모르겠습니다</button>' +
+              : '<button class="lnk" disabled>힌트를 다 썼습니다</button>')) +
+        '<button class="lnk quit" id="give">모르겠습니다</button>' +
       '</div>';
     var begin = function(){ if (!st.started){ st.started = true; tick(); } };
     $('inp').addEventListener('focus', begin);
     $('inp').addEventListener('keydown', function(e){ if (e.key === 'Enter') submit(); });
     $('go').addEventListener('click', function(){ begin(); submit(); });
-    $('give').addEventListener('click', function(){ finish(false, '항복하셨습니다.'); });
+    bindGive();
     if ($('hint')) $('hint').addEventListener('click', function(){ SFX.tap(); askHint(); });
     pinKibo();
+  }
+
+  /* 항복은 한 수로 대국이 끝난다. 터치 영역을 키운 만큼 오조작도 커지므로
+     '기록 지우기'와 같은 2단 확인을 쓴다. 5초 안에 다시 누르지 않으면 풀린다. */
+  function bindGive(){
+    var el = $('give'); if (!el) return;
+    el.addEventListener('click', function(){
+      if (this.dataset.armed){ finish(false, '항복하셨습니다.'); return; }
+      this.dataset.armed = '1';
+      this.textContent = '정말요? 한 번 더';
+      SFX.tap();
+      var btn = this;
+      setTimeout(function(){
+        if (!btn.dataset.armed) return;
+        delete btn.dataset.armed;
+        btn.textContent = '모르겠습니다';
+      }, 5000);
+    });
   }
 
   /* 리워드 광고 자리.
@@ -433,7 +451,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
       $('inp').addEventListener('keydown', function(e){ if (e.key === 'Enter') submit(); });
     }
     if ($('go')) $('go').addEventListener('click', function(){ begin(); submit(); });
-    if ($('give')) $('give').addEventListener('click', function(){ finish(false, '항복하셨습니다.'); });
+    bindGive();
     if ($('hint')) $('hint').addEventListener('click', function(){ SFX.tap(); askHint(); });
   }
   function say(t, cls){ var m=$('msg'); if(m){ m.textContent=t; m.className='msg'+(cls?' '+cls:''); } }

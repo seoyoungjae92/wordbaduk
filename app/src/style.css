@@ -207,12 +207,22 @@
   .msg.rare{color:var(--rare); font-weight:700}
   .need b.hint{color:var(--rare)}
   .aux{display:flex; justify-content:space-between; align-items:center; gap:12px; padding-top:10px}
+  /* 보조 조작. 밑줄 친 13px 글자는 링크처럼 보이고 터치 영역이 25px밖에 안 됐다.
+     '두다'보다 약하되 분명히 누를 것으로 읽히게 테두리를 준 칩으로 바꾼다. */
   .lnk{
-    background:none; border:none; color:var(--ink-soft); font:inherit; font-size:13px;
-    text-decoration:underline; cursor:pointer; padding:6px 0;
+    min-height:44px; min-width:112px; padding:0 16px; box-sizing:border-box;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:none; border:1.5px solid var(--line-hard); border-radius:6px;
+    color:var(--ink-soft); font:inherit; font-size:14px; font-weight:500;
+    letter-spacing:.02em; cursor:pointer;
   }
   .lnk:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
-  .lnk.on{color:var(--rare); font-weight:700}
+  .lnk[disabled]{opacity:.42; cursor:default}
+  .lnk.on{color:var(--rare); font-weight:700; border-color:var(--rare)}
+  /* 항복은 되돌릴 수 없다. 터치 영역은 충분히 주되 눈에 먼저 들어오지는 않게 점선으로. */
+  /* 점선은 '비활성'으로 읽힌다. 테두리를 한 단계 흐리게 해서 물러나게 한다. */
+  .lnk.quit{border-color:var(--line)}
+  .lnk.quit[data-armed]{border-color:var(--urgent); color:var(--urgent); font-weight:700}
   .adbox{
     margin-top:12px; padding:14px; border:1.5px dashed var(--line-hard); border-radius:6px; text-align:center;
   }
@@ -227,11 +237,6 @@
   }
   .adplay .big{font-family:"Gowun Batang",serif; font-size:19px; letter-spacing:.1em}
   .adplay .small{font-size:12px; opacity:.7}
-
-  .give{
-    background:none; border:none; color:var(--ink-soft); font:inherit; font-size:13px;
-    text-decoration:underline; cursor:pointer; padding:12px 0 0; align-self:center;
-  }
 
   .over{text-align:center; padding-block:10px}
   .over h2{font-family:"Gowun Batang",serif; font-size:29px; margin:0 0 6px; font-weight:700}
