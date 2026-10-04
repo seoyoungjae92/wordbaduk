@@ -44,6 +44,35 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     return out;
   }
 
+  /* 「슨」「뚝」처럼 뒤에 이을 말이 아예 없는 글자. 사전에서 직접 구한다. */
+  var DEADCH = {};
+  function isDeadChar(ch){
+    if (DEADCH[ch] === undefined){
+      var n = 0;
+      allowedStarts(ch).forEach(function(c){ n += (CNT[c] || 0); });
+      DEADCH[ch] = (n === 0);
+    }
+    return DEADCH[ch];
+  }
+
+  /* 사람이 실제로 떠올릴 수 있는 한방단어 = '흔한 말' 중 끝내는 글자로 끝나는 것.
+     사전 전체(28만)가 아니라 한글이 어휘(24,912)만 세는 이유가 여기 있다 —
+     고어·방언으로만 닿는 한방은 아무도 못 쓰므로 위험이 아니다.
+     첫 글자별로 미리 세 둔다. 한 수를 둘 때마다 훑으면 화면이 멈춘다. */
+  var KILLC = {};
+  TIER.forEach(function(list){
+    list.forEach(function(w){
+      if (isDeadChar(w.charAt(w.length - 1))) KILLC[w[0]] = (KILLC[w[0]] || 0) + 1;
+    });
+  });
+  /* 이 말을 두면 상대가 곧바로 한방으로 끝낼 수 있는 자리가 몇 개 열리나 */
+  function killOpen(w){
+    var n = 0;
+    allowedStarts(w.charAt(w.length - 1)).forEach(function(c){ n += (KILLC[c] || 0); });
+    return n;
+  }
+
+
   var st = {
     moves:[], used:{}, usedFirst:{}, left:30, timer:null, over:false,
     rankIdx:0, prog:0, dexWords:0, dexKill:0, dexRare:0,
@@ -82,6 +111,18 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     var ease   = Math.max(0, 0.7 - st.difficulty) / 0.6;
     var scarce = n <= 4 ? 1 : n <= 12 ? 0.8 : n <= 30 ? 0.4 : n <= 60 ? 0.06 : 0;
     return 0.6 * ease * scarce;
+  }
+
+  /* 상대에게 한방 자리를 열어줄 확률.
+     그냥 두면 한글이 어휘의 18.4%가 한방 자리를 연다 — 한 수 걸러 한 번꼴이라
+     흔한 한방단어 몇 개만 외우면 급수와 상관없이 이긴다.
+     그래서 둘 수를 고르기 전에 '이번 수에 열어줄지'를 먼저 정한다.
+       · 초반 12수까지는 한 자리도 열지 않는다. 대국이 성립하기 전에 끝나면 안 된다.
+       · 급수가 오를수록 조인다. 18급 15% → 10급 11% → 1급 7% → 3단 5%.
+       · 바닥을 4%로 남긴다. 완전히 막으면 도감의 '끝내는 글자'를 모을 길이 끊긴다. */
+  function offerChance(){
+    if (st.moves.length < 12) return 0;
+    return 0.04 + 0.13 * Math.pow(1 - level(), 1.5);
   }
 
   function remaining(word){
@@ -267,6 +308,12 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     var cands = all.filter(function(o){ return o.t <= P; });
     if (!cands.length) cands = all;
     cands = cands.map(function(o){ return o.w; });
+    /* 열기로 했으면 일부러 여는 수만, 아니면 안 여는 수만 남긴다.
+       '열어도 된다'로 두면 실제로 열리는 건 그중 18%뿐이라 너무 안 나온다.
+       남는 게 없으면 어쩔 수 없다 — 그건 진짜로 몰린 자리다. */
+    var want = Math.random() < offerChance();
+    var sub = cands.filter(function(w){ return (killOpen(w) > 0) === want; });
+    if (sub.length) cands = sub;
     if (cands.length > 240){
       for (var a = cands.length - 1; a > 0; a--){
         var b = Math.floor(Math.random()*(a+1)), t = cands[a]; cands[a]=cands[b]; cands[b]=t;
