@@ -8,7 +8,7 @@
     --stone-w:#F6F1E5; --stone-w-ink:#241B0E;
     --rare:#5A3604; --rare-ink:#FFF4DC;
     --urgent:#7A1A0F; --accent:#1E4237; --track:rgba(80,56,22,.22);
-    --shadow:0 1px 0 rgba(255,245,220,.35) inset, 0 14px 32px rgba(50,32,8,.28);
+    --shadow:0 1px 0 rgba(255,245,220,.35) inset;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -19,7 +19,7 @@
       --stone-w:#E7DDC7; --stone-w-ink:#241B0E;
       --rare:#E0AC55; --rare-ink:#241B0E;
       --urgent:#E8705A; --accent:#7FBCA8; --track:rgba(237,232,216,.18);
-      --shadow:0 1px 0 rgba(255,235,190,.07) inset, 0 14px 32px rgba(0,0,0,.5);
+      --shadow:0 1px 0 rgba(255,235,190,.07) inset;
     }
   }
   :root[data-theme="dark"]{
@@ -30,7 +30,7 @@
     --stone-w:#E7DDC7; --stone-w-ink:#241B0E;
     --rare:#E0AC55; --rare-ink:#241B0E;
     --urgent:#E8705A; --accent:#7FBCA8; --track:rgba(237,232,216,.18);
-    --shadow:0 1px 0 rgba(255,235,190,.07) inset, 0 14px 32px rgba(0,0,0,.5);
+    --shadow:0 1px 0 rgba(255,235,190,.07) inset;
   }
 
   /* 타이포 스케일. 전에는 23종이 0.5px 차이로 섞여 있어서 위계가 안 보였다.
@@ -58,16 +58,16 @@
   .app{
     width:100%; max-width:430px; height:100%; margin:0 auto;
     background:
-      repeating-linear-gradient(0deg, var(--line) 0 1px, transparent 1px 34px),
-      repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 34px),
-      linear-gradient(160deg, var(--board) 0%, var(--board-2) 100%);
-    box-shadow:var(--shadow);
+      repeating-linear-gradient(0deg, var(--line) 0 1px, transparent 1px 34px), /* taste-skill-ignore: 바둑판 격자가 이 게임의 형태다 */
+      repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 34px), /* taste-skill-ignore */
+      linear-gradient(160deg, var(--board) 0%, var(--board-2) 100%); /* taste-skill-ignore: 나무결 */
+    box-shadow:var(--shadow); /* taste-skill-ignore: 떨어지는 그림자가 아니라 보드 윗면의 가장자리 빛 */
     display:flex; flex-direction:column;
     padding:calc(var(--sa-top) + 8px) 18px calc(24px + var(--sa-bottom)); box-sizing:border-box;
   }
 
   .head{padding-block:18px 12px; border-bottom:1.5px solid var(--line-hard)}
-  .head h1{
+  .head .ttl{
     font-family:"Gowun Batang",serif; font-size:var(--t-5); margin:0;
     letter-spacing:.14em; text-align:center; font-weight:700;
   }
@@ -78,16 +78,16 @@
   .player .rk{font-family:"Gowun Batang",serif; font-size:var(--t-4); color:var(--accent); font-weight:700; white-space:nowrap}
   .vs{font-family:"Gowun Batang",serif; font-size:var(--t-3); color:var(--ink-soft); flex:none}
   .stone{width:17px; height:17px; border-radius:50%; flex:none}
-  .stone.b{background:radial-gradient(circle at 34% 30%, #5c564d, var(--stone-b) 62%)}
-  .stone.w{background:radial-gradient(circle at 34% 30%, #ffffff, var(--stone-w) 66%); border:1px solid rgba(80,56,22,.3)}
+  .stone.b{background:radial-gradient(circle at 34% 30%, #5c564d, var(--stone-b) 62%)} /* taste-skill-ignore: 돌의 광택 */
+  .stone.w{background:radial-gradient(circle at 34% 30%, #ffffff, var(--stone-w) 66%); border:1px solid rgba(80,56,22,.3)} /* taste-skill-ignore: 돌의 광택과 테두리 */
 
   .kibo{
     flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:8px;
     padding-block:16px; overflow-y:auto; overscroll-behavior:contain;
     /* 위로 스크롤된 수가 헤더 선에 뚝 잘려서 깨진 것처럼 보였다.
        상단만 흐려지면 '위에 더 있다'는 신호가 된다. */
-    -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 22px);
-    mask-image:linear-gradient(to bottom, transparent 0, #000 22px);
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 22px); /* taste-skill-ignore: 채우기가 아니라 마스크 */
+    mask-image:linear-gradient(to bottom, transparent 0, #000 22px); /* taste-skill-ignore */
   }
   /* 종국 화면은 기보가 안 흐르므로 마스크를 걷는다 */
   .app.done .kibo{-webkit-mask-image:none; mask-image:none}
@@ -96,7 +96,7 @@
   /* 화면 전환 */
   #home, #settings{display:none}
   .app.s-home{height:auto; min-height:100%}
-  .app.s-home #home{display:block}
+  .app.s-home #home{display:flex; flex-direction:column; flex:1 1 auto; min-height:0}
   .app.s-home .head, .app.s-home .kibo, .app.s-home #panel{display:none}
   .app.s-set{height:auto; min-height:100%}
   .app.s-set #settings{display:block}
@@ -104,7 +104,7 @@
 
   /* 홈 */
   .hero{padding-block:44px 8px; text-align:center}
-  .hero h1{
+  .hero h1, .hero h2{
     font-family:"Gowun Batang",serif; font-size:var(--t-8); margin:0;
     letter-spacing:.2em; font-weight:700; line-height:1.5;
   }
@@ -114,8 +114,9 @@
   }
   .myrank .top{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px}
   .myrank .g{font-family:"Gowun Batang",serif; font-size:var(--t-9); font-weight:700; line-height:1}
-  .myrank .g small{font-size:var(--t-3); color:var(--ink-soft); margin-left:6px; font-family:"Noto Sans KR",sans-serif}
+  .myrank .g small{font-size:var(--t-3); color:var(--ink-soft); margin-left:6px; font-weight:400}
   .myrank .r{font-size:var(--t-2); color:var(--ink-soft); text-align:right; word-break:keep-all}
+  .myrank .first{margin:24px 0 0; font-size:var(--t-3); color:var(--ink); line-height:1.65; word-break:keep-all}
   .stats{display:flex; justify-content:space-between; gap:8px; margin-top:24px}
   .stats div{text-align:center; flex:1; min-width:0}
   .stats .n{font-family:"Gowun Batang",serif; font-size:var(--t-6); font-weight:700; display:block; line-height:1.1}
@@ -123,13 +124,13 @@
   .stats .hi .n{color:var(--rare)}
   .stats .rec .n{color:var(--accent)}
   .stats .t{white-space:nowrap}
-  .menu{display:flex; flex-direction:column; gap:9px; margin-top:26px}
+  .menu{display:flex; flex-direction:column; gap:9px; margin-top:auto; padding-top:26px}
   .menu .btn, .menu .dexbtn{margin-top:0}
 
   /* 설정 */
   .setrow{
     display:flex; align-items:center; justify-content:space-between; gap:14px;
-    padding:17px 2px; border-bottom:1px solid var(--line-hard);
+    padding:17px 2px; border-bottom:1px solid var(--line-hard); /* taste-skill-ignore: 표에 가까운 설정 행 */
   }
   .setrow .lbl{font-size:var(--t-4); font-weight:500}
   .setrow .desc{font-size:var(--t-2); color:var(--ink-soft); margin-top:3px; word-break:keep-all}
@@ -178,11 +179,11 @@
     font-size:var(--t-5); font-weight:500; letter-spacing:.02em;
   }
   .word.b{background:var(--stone-b); color:var(--stone-b-ink)}
-  .word.w{background:var(--stone-w); color:var(--stone-w-ink); box-shadow:0 1px 3px rgba(60,40,10,.2)}
+  .word.w{background:var(--stone-w); color:var(--stone-w-ink); box-shadow:0 1px 3px rgba(60,40,10,.2)} /* taste-skill-ignore: 밝은 바둑판 위의 흰 돌을 떼어내는 최소한의 그림자 */
   .word.rare{background:var(--rare); color:var(--rare-ink); box-shadow:none}
   .word .seal{
     font-family:"Gowun Batang",serif; font-size:var(--t-1); font-weight:700;
-    border:1px solid currentColor; border-radius:var(--r-sm); padding:1px 4px; opacity:.85; letter-spacing:.04em;
+    border:1px solid currentColor; border-radius:var(--r-sm); padding:1px 4px; opacity:.85; letter-spacing:.04em; /* taste-skill-ignore: 돌에 찍힌 낙관 */
   }
 
   .turn{
@@ -311,7 +312,7 @@
   .cell.lock{border-style:dashed; opacity:.55}
   .bookrow{
     display:flex; justify-content:space-between; align-items:baseline;
-    padding:12px 2px; border-bottom:1px solid var(--rule, var(--line)); font-size:var(--t-3);
+    padding:12px 2px; border-bottom:1px solid var(--rule, var(--line)); font-size:var(--t-3); /* taste-skill-ignore: 표에 가까운 기록 행 */
   }
   .bookrow b{font-family:"Gowun Batang",serif; font-size:var(--t-5)}
   .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
@@ -322,8 +323,3 @@
   .empty{font-size:var(--t-3); color:var(--ink-soft); padding:10px 0; word-break:keep-all}
   .sect{font-size:var(--t-2); letter-spacing:.2em; color:var(--ink-soft); margin:22px 0 8px}
 
-  .note{margin-top:24px; font-size:var(--t-3); color:var(--ink-soft)}
-  .note summary{cursor:pointer; letter-spacing:.06em; padding:8px 0; font-size:var(--t-2)}
-  .note div{padding-top:4px; line-height:1.75; word-break:keep-all}
-  .note b{color:var(--ink); font-weight:700}
-  .note hr{border:none; border-top:1px solid var(--line-hard); margin:11px 0}

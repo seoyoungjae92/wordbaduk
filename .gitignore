@@ -8,3 +8,6 @@ tools/data/
 signing-key-info.txt
 *.aab
 *.apk
+
+# 디자인 검사 산출물 (스크린샷·리포트)
+.taste-skill/

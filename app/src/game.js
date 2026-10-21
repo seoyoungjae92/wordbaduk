@@ -759,6 +759,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
   function renderHome(){
     var cnt = dexCount();
     var nextRank = st.rankIdx < RANKS.length - 1 ? RANKS[st.rankIdx + 1] : null;
+    var played = st.best > 0 || st.dexWords > 0;
     $('home').innerHTML =
       '<div class="hero"><h1>끝말잇기<br>대국</h1>' +
         '<p>표준국어대사전 281,389단어</p></div>' +
@@ -771,12 +772,17 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
           '</span></div>' +
         '<div class="track"><div class="fill" style="width:' +
           (!nextRank || st.examReady ? 100 : Math.min(100, st.prog / NEED_WINS * 100)) + '%"></div></div>' +
-        '<div class="stats">' +
-          '<div class="rec"><span class="n">' + st.best + '</span><span class="t">최장 수순</span></div>' +
-          '<div><span class="n">' + st.dexWords + '</span><span class="t">둔 말</span></div>' +
-          '<div><span class="n">' + st.dexKill + '</span><span class="t">이긴 한방</span></div>' +
-          '<div class="hi"><span class="n">' + st.dexRare + '</span><span class="t">낯선 말</span></div>' +
-        '</div>' +
+        /* 첫 대국 전에는 0이 네 개 놓인다. 기록이 쌓인 사람에게는 훈장이지만
+           처음 온 사람에게는 '아무것도 없는 앱'으로 읽힌다. 그때는 규칙 한 줄을 대신 둔다. */
+        (played
+          ? '<div class="stats">' +
+              '<div class="rec"><span class="n">' + st.best + '</span><span class="t">최장 수순</span></div>' +
+              '<div><span class="n">' + st.dexWords + '</span><span class="t">둔 말</span></div>' +
+              '<div><span class="n">' + st.dexKill + '</span><span class="t">이긴 한방</span></div>' +
+              '<div class="hi"><span class="n">' + st.dexRare + '</span><span class="t">낯선 말</span></div>' +
+            '</div>'
+          : '<p class="first">한글이와 번갈아 말을 잇습니다. 3승마다 승급 시험을 치르고, ' +
+            '올라간 급수는 내려가지 않습니다.</p>') +
       '</div>' +
       '<div class="menu">' +
         '<button class="btn" id="hStart">대국 시작</button>' +
@@ -799,7 +805,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
         '" aria-label="' + label + '"><i></i></button></div>';
     }
     $('settings').innerHTML =
-      '<div class="hero" style="padding-block:34px 4px"><h1 style="font-size:23px">설 정</h1></div>' +
+      '<div class="hero" style="padding-block:34px 4px"><h2 style="font-size:23px">설 정</h2></div>' +
       row('swSound', '효과음', '돌 놓는 소리, 초읽기, 승패', st.sound) +
       row('swHaptic', '진동', '수를 둘 때 짧게 울립니다', st.haptic) +
       /* 광고를 붙이기 전(ADS_DEFAULT=false)에는 이 줄을 아예 내보내지 않는다.
