@@ -48,8 +48,9 @@ SOURCES = {
         "src/main/resources/org/openkoreantext/processor/util/adjective/adjective.txt",
 }
 
-# 5음절까지 받는다. 4음절로 끊으면 「아이스크림」처럼 흔한 말이 사전에 없다고 뜬다.
-SYLLABLE = re.compile(r"^[가-힣]{2,5}$")
+# 길이로 자르지 않는다. 음절 수 제한은 「수산화나트륨」처럼 끝말잇기에서
+# 가장 많이 쓰이는 한방단어를 통째로 날린다. 한 글자만 막으면 된다.
+SYLLABLE = re.compile(r"^[가-힣]{2,}$")
 
 # 명사 목록에 없어서 되살아나지 못하는 흔한 '-다' 명사.
 # shortcut: 손으로 적은 목록이다. 더 나은 품사 사전을 쓰게 되면 지운다.
@@ -208,7 +209,7 @@ def main():
     cov = coverage(b["tiers"], b["probe"])
 
     print()
-    print(f"  내가 쓸 수 있는 말   {len(b['words']):,}   (2~5음절 · 순한글 · 용언 제외)")
+    print(f"  내가 쓸 수 있는 말   {len(b['words']):,}   (2음절 이상 · 순한글 · 용언 제외)")
     print(f"  한글이가 아는 말     {sum(len(t) for t in b['tiers']):,}   "
           f"(1단 {len(b['tiers'][0]):,} / 2단 {len(b['tiers'][1]):,} / 3단 {len(b['tiers'][2]):,})")
     print(f"  단 별 응수 가능률    {cov[0]:.1f}% → {cov[1]:.1f}% → {cov[2]:.1f}%")
