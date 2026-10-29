@@ -6,6 +6,22 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
 
+  /* 한글이의 판단은 전부 rnd()를 쓴다. 주소에 ?seed=숫자를 붙이면 같은 시드에서
+     같은 판단이 나와서, 이상한 판을 기보와 시드로 그대로 재현할 수 있다.
+     없으면 평소처럼 Math.random이다. (mulberry32) */
+  var rnd = (function(){
+    var m = /[?&]seed=(\d+)/.exec(location.search);
+    if (!m) return Math.random;
+    var a = Number(m[1]) >>> 0;
+    return function(){
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  })();
+
   /* ── 사전 ───────────────────────────────────────────────
      DICT_IDX   : 첫 음절 -> 나머지 음절(개행 구분). 2음절 이상 표제어 344,064개. 내가 쓸 수 있는 말.
      DICT_TIERS : 한글이가 아는 말을 빈도 3단으로 나눈 것. 명사 사전으로 걸러 25,279개.
@@ -301,7 +317,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
   function planAi(){
     var all = aiOptions(last());
     if (!all.length) return {concede:true, stuck:true, opts:0};
-    if (st.moves.length >= 8 && Math.random() < blankChance(all.length)){
+    if (st.moves.length >= 8 && rnd() < blankChance(all.length)){
       return {concede:true, stuck:false, opts:all.length};
     }
     var P = prefTier();
@@ -311,12 +327,12 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     /* 열기로 했으면 일부러 여는 수만, 아니면 안 여는 수만 남긴다.
        '열어도 된다'로 두면 실제로 열리는 건 그중 18%뿐이라 너무 안 나온다.
        남는 게 없으면 어쩔 수 없다 — 그건 진짜로 몰린 자리다. */
-    var want = Math.random() < offerChance();
+    var want = rnd() < offerChance();
     var sub = cands.filter(function(w){ return (killOpen(w) > 0) === want; });
     if (sub.length) cands = sub;
     if (cands.length > 240){
       for (var a = cands.length - 1; a > 0; a--){
-        var b = Math.floor(Math.random()*(a+1)), t = cands[a]; cands[a]=cands[b]; cands[b]=t;
+        var b = Math.floor(rnd()*(a+1)), t = cands[a]; cands[a]=cands[b]; cands[b]=t;
       }
       cands = cands.slice(0, 240);
     }
@@ -325,7 +341,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     if (!pool.length) pool = scored;
     pool.sort(function(x,y){ return y.f - x.f; });
     var i = Math.floor(level() * (pool.length - 1));
-    if (Math.random() < 0.45) i += (Math.random() < 0.5 ? -1 : 1);
+    if (rnd() < 0.45) i += (rnd() < 0.5 ? -1 : 1);
     i = Math.max(0, Math.min(pool.length - 1, i));
     return {concede:false, word:pool[i].w, opts:all.length};
   }
@@ -340,18 +356,18 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     /* 지고 있을수록 평소에도 더 뜸을 들인다. 그래야 고민이 패배의 신호가 되지 않는다. */
     var slow = 1 + Math.max(0, 0.7 - level()) * 1.5;
     var tight = Math.min(0.95, (n <= 3 ? 0.92 : n <= 10 ? 0.6 : n <= 40 ? 0.34 : 0.2) * slow);
-    var ponder = plan.concede || Math.random() < tight;
+    var ponder = plan.concede || rnd() < tight;
     var need = needChar();
     var el = $('think');
     var jobs = [], total;
 
     if (ponder){
-      total = 1900 + Math.random()*1500 + (plan.concede ? 800 : 0);
+      total = 1900 + rnd()*1500 + (plan.concede ? 800 : 0);
       jobs.push([750,  '한글이가 오래 생각합니다']);
       jobs.push([1500, '「' + need + '」… 「' + need + '」…']);
       if (total > 3000) jobs.push([2800, '한글이가 한참을 망설입니다']);
     } else {
-      total = 430 + Math.random()*380;
+      total = 430 + rnd()*380;
     }
     jobs.forEach(function(j){
       setTimeout(function(){
@@ -381,7 +397,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
       for (var a = 0; a < s.length; a++){
         (FIRST[t][s[a]] || []).forEach(function(w){ if (!st.used[w] && w.length >= 2) pool.push(w); });
       }
-      if (pool.length) return pool[Math.floor(Math.random() * pool.length)][1];
+      if (pool.length) return pool[Math.floor(rnd() * pool.length)][1];
     }
     return null;
   }
@@ -905,7 +921,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     var tag = $('examTag');
     if (tag) tag.textContent = st.exam ? '승 급 시 험' : '';
     var opener, guard = 0;
-    do { opener = TIER[0][Math.floor(Math.random()*TIER[0].length)]; guard++; }
+    do { opener = TIER[0][Math.floor(rnd()*TIER[0].length)]; guard++; }
     while (guard < 200 && (aiOptions(opener).length < 5 || remaining(opener) < 60));
     /* 징이 울리는 동안 지난 판의 성적표가 남아 보이지 않게 비운다 */
     $('panel').innerHTML = '<div class="turn"><span class="need">' +

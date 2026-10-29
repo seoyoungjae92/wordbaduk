@@ -5,6 +5,7 @@ import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { gzipSync } from 'node:zlib';
 
 const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), 'dist');
 const PORT = process.env.PORT || 8080;
@@ -31,9 +32,24 @@ function cacheFor(path) {
   return 'public, max-age=300';
 }
 
-async function send(res, path, status = 200) {
-  const body = await readFile(path);
+// 텍스트 자산은 gzip으로 보낸다. 사전(dict.json)이 3MB가 넘어서 압축 여부가
+// 첫 로딩을 좌우한다. 파일은 배포 사이에 안 바뀌니 압축본은 메모리에 한 번만 만든다.
+const COMPRESSIBLE = new Set(['.html', '.js', '.css', '.json', '.webmanifest', '.svg', '.txt']);
+const gzipped = new Map();
+
+async function send(req, res, path, status = 200) {
+  let body = await readFile(path);
+  const headers = {};
+  if (COMPRESSIBLE.has(extname(path))) {
+    headers['Vary'] = 'Accept-Encoding';
+    if (/\bgzip\b/.test(req.headers['accept-encoding'] || '')) {
+      if (!gzipped.has(path)) gzipped.set(path, gzipSync(body));
+      body = gzipped.get(path);
+      headers['Content-Encoding'] = 'gzip';
+    }
+  }
   res.writeHead(status, {
+    ...headers,
     'Content-Type': TYPES[extname(path)] || 'application/octet-stream',
     'Cache-Control': cacheFor(path),
     // 루트 스코프로 서비스 워커를 등록할 수 있게
@@ -52,7 +68,7 @@ createServer(async (req, res) => {
 
     try {
       if ((await stat(path)).isDirectory()) path = join(path, 'index.html');
-      return await send(res, path);
+      return await send(req, res, path);
     } catch {
       /* 없는 경로를 무조건 index.html로 돌려주면 안 된다.
          안드로이드가 /.well-known/assetlinks.json 을 받아 갈 때 HTML이 오면
@@ -61,7 +77,7 @@ createServer(async (req, res) => {
         res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
         return res.end('not found');
       }
-      return await send(res, join(ROOT, 'index.html'));
+      return await send(req, res, join(ROOT, 'index.html'));
     }
   } catch {
     res.writeHead(500).end('server error');
