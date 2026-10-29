@@ -7,8 +7,8 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
   var $ = function(id){ return document.getElementById(id); };
 
   /* ── 사전 ───────────────────────────────────────────────
-     DICT_IDX   : 첫 음절 -> 나머지 음절(개행 구분). 2~4음절 표제어 281,389개. 내가 쓸 수 있는 말.
-     DICT_TIERS : 한글이가 아는 말을 빈도 3단으로 나눈 것. 명사 사전으로 걸러 24,912개.
+     DICT_IDX   : 첫 음절 -> 나머지 음절(개행 구분). 2음절 이상 표제어 344,064개. 내가 쓸 수 있는 말.
+     DICT_TIERS : 한글이가 아는 말을 빈도 3단으로 나눈 것. 명사 사전으로 걸러 25,279개.
                   난이도가 오를수록 윗단을 열어준다 = 한글이의 어휘가 넓어진다.        */
   var CNT = {};
   for (var k in DICT_IDX){
@@ -56,7 +56,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
   }
 
   /* 사람이 실제로 떠올릴 수 있는 한방단어 = '흔한 말' 중 끝내는 글자로 끝나는 것.
-     사전 전체(28만)가 아니라 한글이 어휘(24,912)만 세는 이유가 여기 있다 —
+     사전 전체(34만)가 아니라 한글이 어휘(25,279)만 세는 이유가 여기 있다 —
      고어·방언으로만 닿는 한방은 아무도 못 쓰므로 위험이 아니다.
      첫 글자별로 미리 세 둔다. 한 수를 둘 때마다 훑으면 화면이 멈춘다. */
   var KILLC = {};
@@ -662,7 +662,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
   }
 
   /* ── 단어 도감 ───────────────────────────
-     수집 대상은 '끝내는 글자'다. 사전 전체에서 이을 말이 없는 글자가 201개인데,
+     수집 대상은 '끝내는 글자'다. 사전 전체에서 이을 말이 없는 글자가 199개인데,
      그중 흔한 말로 닿을 수 있는 건 15개뿐이라 도감 크기로 딱 맞다. */
   function dexCount(){
     var main = 0, hard = 0, extra = 0;
@@ -695,7 +695,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     var h = '<section class="book">' +
       '<h2>단 어 도 감</h2>' +
       '<p class="sub">끝말잇기에서 이을 말이 없는 글자를 <b>끝내는 글자</b>라고 합니다.<br>' +
-      '사전 전체에 201개가 있습니다. 그중 모을 만한 것이 ' +
+      '사전 전체에 199개가 있습니다. 그중 모을 만한 것이 ' +
       DEX_MAIN.length + ' + ' + DEX_HARD.length + '개, 나머지는 고어·방언으로만 닿습니다.</p>' +
       '<p class="sect">1권 · 흔한 말로 닿는 글자 ' + main + ' / ' + DEX_MAIN.length + '</p>' +
       '<div class="grid">' + cells(DEX_MAIN, false) + '</div>' +
@@ -709,7 +709,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
       '<p class="sect">한글이가 모르던 말 ' + st.dexRare + '</p>' +
       (rares.length
         ? '<div class="chips">' + rares.map(function(w){ return '<span class="chip">' + w + '</span>'; }).join('') + '</div>'
-        : '<p class="empty">아직 없습니다. 한글이는 흔한 명사 24,912개만 압니다. 그 밖의 말을 두면 여기 쌓입니다.</p>') +
+        : '<p class="empty">아직 없습니다. 한글이는 흔한 명사 25,279개만 압니다. 그 밖의 말을 두면 여기 쌓입니다.</p>') +
       '<div class="bookrow"><span>최장 수순</span><b>' + st.best + '수</b></div>' +
       '<div class="bookrow"><span>지금까지 둔 말</span><b>' + st.dexWords + '</b></div>' +
       '<div class="bookrow"><span>이긴 한방</span><b>' + st.dexKill + '</b></div>' +
@@ -762,7 +762,7 @@ export function startGame({ DICT_IDX, DICT_TIERS, DEX_MAIN, DEX_HARD, platform, 
     var played = st.best > 0 || st.dexWords > 0;
     $('home').innerHTML =
       '<div class="hero"><h1>끝말잇기<br>대국</h1>' +
-        '<p>표준국어대사전 281,389단어</p></div>' +
+        '<p>표준국어대사전 344,064단어</p></div>' +
       '<div class="myrank">' +
         '<div class="top"><span class="g">' + RANKS[st.rankIdx] + '<small>나</small></span>' +
           '<span class="r">한글이 ' + aiRank() + '<br>' +
